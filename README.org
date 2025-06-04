@@ -1,0 +1,23 @@
+#+TITLE: Cat
+#+AUTHOR: Noah Ma
+#+EMAIL: noahstorym@gmail.com
+
+* Table of Contents                                       :TOC_5_gh:noexport:
+- [[#cat][cat]]
+  - [[#installation][Installation]]
+  - [[#license][License]]
+  - [[#contributing][Contributing]]
+
+* cat
+A category theory toolkit for Racket.
+
+** Installation
+#+begin_src shell
+raco pkg install cat
+#+end_src
+
+** License
+MIT
+
+** Contributing
+Issues and pull requests welcome!
