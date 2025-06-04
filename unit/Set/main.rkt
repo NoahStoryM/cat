@@ -1,8 +1,8 @@
 #lang racket/unit
 
-(require "../../sig/category.rkt"
-         "../../sig/product.rkt"
-         "../../sig/coproduct.rkt"
+(require "../../signature/category.rkt"
+         "../../signature/product.rkt"
+         "../../signature/coproduct.rkt"
          "type.rkt"
          "function.rkt"
          racket/format

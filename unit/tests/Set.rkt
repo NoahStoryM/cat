@@ -3,9 +3,9 @@
 (require "../Set.rkt"
          "../Set/type.rkt"
          "../Set/function.rkt"
-         "../../sig/category.rkt"
-         "../../sig/product.rkt"
-         "../../sig/coproduct.rkt"
+         "../../signature/category.rkt"
+         "../../signature/product.rkt"
+         "../../signature/coproduct.rkt"
          racket/match
          racket/unit
          rackunit
