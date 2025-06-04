@@ -66,19 +66,19 @@
       (values (treelist-append p (function-path f))
               (function-target f)))]))
 (define (∘ . f*) (apply ⨾ (reverse f*)))
-(define (= f1 . f*)
+(define (morphism= f1 . f*)
   (match-define (function p1 s1 t1) f1)
   (for/and ([f2 (in-list f*)])
     (match-define (function p2 s2 t2) f2)
     (and (unsafe-type= s1 s2)
          (unsafe-type= t1 t2)
-         (eqv? (treelist-length p1)
-               (treelist-length p2))
+         (= (treelist-length p1)
+            (treelist-length p2))
          (for/and ([e1 (in-treelist p1)]
                    [e2 (in-treelist p2)])
            (equal? e1 e2)))))
-(define (? v) (function? v))
-(define (id? f)
+(define (morphism? v) (function? v))
+(define (object? f)
   (match-define (function p s t) f)
   (and (treelist-empty? p) (unsafe-type= s t)))
 
@@ -105,9 +105,9 @@
      (ann : ,s)]))
 
 (define (∏ . f*)
-  (if (member |0| f* =)
-      |0|                               ; 0 = 0 × f = f × 0
-      (match (remove* (list |1|) f* =)  ; f = 1 × f = f × 1
+  (if (member |0| f* morphism=)
+      |0|                                      ; 0 = 0 × f = f × 0
+      (match (remove* (list |1|) f* morphism=) ; f = 1 × f = f × 1
         [(list) |1|]
         [(list f) f]
         [f*
@@ -125,7 +125,7 @@
                 (λ (#:tag [#;input-tag it 0] . arg*)
                   ;; Check inputs
                   (define arity (unsafe-get-arity s it))
-                  (unless (eqv? (length arg*) arity)
+                  (unless (= (length arg*) arity)
                     (apply raise-arity-error '∏ arity arg*))
 
                   ;; Split inputs
@@ -161,7 +161,7 @@
 
                   ;; Check outputs
                   (define result-arity (unsafe-get-arity t ot))
-                  (unless (eqv? (length res*) result-arity)
+                  (unless (= (length res*) result-arity)
                     (apply raise-result-arity-error '∏ result-arity #f res*))
 
                   (apply/variant variant #:tag ot res*)))))
@@ -181,7 +181,7 @@
             (function-target f)))
         (define t (normalize-type `(× . ,t*)))
         (define id (ann *->1 (→ ,s 1)))
-        (match (remove* (list id) f* =)
+        (match (remove* (list id) f* morphism=)
           [(list)
            (unless (equal? t '(×))
              (raise-argument-error
@@ -197,7 +197,7 @@
               (λ (#:tag [#;input-tag it 0] . arg*)
                 ;; Check inputs
                 (define arity (unsafe-get-arity s it))
-                (unless (eqv? (length arg*) arity)
+                (unless (= (length arg*) arity)
                   (apply raise-arity-error '○ arity arg*))
 
                 ;; Apply each function to the same inputs
@@ -212,12 +212,12 @@
                     (append res* comp-res)))
                 (define #;output-tag ot
                   (ravel-ids ot*
-                             (for/vector #:length len ([t (in-list t*)])
-                               (get-coarity t))))
+                   (for/vector #:length len ([t (in-list t*)])
+                     (get-coarity t))))
 
                 ;; Check outputs
                 (define result-arity (unsafe-get-arity t ot))
-                (unless (eqv? (length res*) result-arity)
+                (unless (= (length res*) result-arity)
                   (apply raise-result-arity-error '○ result-arity #f res*))
 
                 (apply/variant variant #:tag ot res*))))
@@ -247,7 +247,7 @@
      (ann : ,t)]))
 
 (define (∐ . f*)
-  (match (remove* (list |0|) f* =)      ; f = 0 + f = f + 0
+  (match (remove* (list |0|) f* morphism=) ; f = 0 + f = f + 0
     [(list) |0|]
     [(list f) f]
     [f*
@@ -293,7 +293,7 @@
             (function-source f)))
         (define s (normalize-type `(× . ,s*)))
         (define id (ann 0->* (→ 0 ,t)))
-        (match (remove* (list id) f* =)
+        (match (remove* (list id) f* morphism=)
           [(list)
            (unless (equal? s '(+))
              (raise-argument-error

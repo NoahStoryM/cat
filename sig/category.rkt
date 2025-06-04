@@ -3,10 +3,10 @@
 (require racket/contract/base)
 
 (contracted
- [dom (-> ? ?)]
- [cod (-> ? ?)]
- [∘ (-> ? ? ... ?)]
- [⨾ (-> ? ? ... ?)]
- [= (-> any/c any/c ... boolean?)]
- [? (-> any/c boolean?)]
- [id? (-> ? boolean?)])
+ [dom (-> morphism? morphism?)]
+ [cod (-> morphism? morphism?)]
+ [∘ (-> morphism? morphism? ... morphism?)]
+ [⨾ (-> morphism? morphism? ... morphism?)]
+ [morphism= (-> morphism? morphism? ... boolean?)]
+ [morphism? (-> any/c boolean?)]
+ [object? (-> morphism? boolean?)])

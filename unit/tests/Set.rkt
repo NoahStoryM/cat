@@ -65,11 +65,11 @@
        [((list a0 a1) 0) a0]))
    (→ (× Any Any) Any)))
 
-(test-case "Arrow tests"
-  (check-pred id? a)
-  (check-pred id? b)
-  (check-pred id? c)
-  (check-pred id? d)
+(test-case "Variant tests"
+  (check-pred object? a)
+  (check-pred object? b)
+  (check-pred object? c)
+  (check-pred object? d)
   (check-variant= (f 'a #:tag 0) (values 'a 'a))
   (check-variant= (f 'a) (variant 'a 'a #:tag 0))
   (check-variant= (f #:tag 1) (variant #:tag 1))
@@ -77,26 +77,26 @@
 
 (test-case "Category tests"
   ;; Existence of composition
-  (check-true (= b (cod f) (dom g)))
-  (check-true (= a (dom (∘ g f)) (dom f)))
-  (check-true (= c (cod (∘ g f)) (cod g)))
+  (check-true (morphism= b (cod f) (dom g)))
+  (check-true (morphism= a (dom (∘ g f)) (dom f)))
+  (check-true (morphism= c (cod (∘ g f)) (cod g)))
 
   ;; Associativity of composition
-  (check-true (= (∘ h g f) (∘ (∘ h g) f) (∘ h (∘ g f))))
+  (check-true (morphism= (∘ h g f) (∘ (∘ h g) f) (∘ h (∘ g f))))
 
   ;; Existence of identity arrows
-  (check-true (= a (dom a) (cod a)))
+  (check-true (morphism= a (dom a) (cod a)))
 
   ;; Composition and identity arrows
-  (check-true (= f (∘ f (dom f)) (∘ (cod f) f))))
+  (check-true (morphism= f (∘ f (dom f)) (∘ (cod f) f))))
 
 (test-case "Product tests"
   (define a×b×c (∏ a b c))
   (define b×c×d (∏ b c d))
   (define f×g×h (∏ f g h))
 
-  (check-true (= a×b×c (dom f×g×h)))
-  (check-true (= b×c×d (cod f×g×h)))
+  (check-true (morphism= a×b×c (dom f×g×h)))
+  (check-true (morphism= b×c×d (cod f×g×h)))
 
   (check-variant= (f×g×h 1 2 3 4 5) (values 1 1 2 3 4))
   (check-variant= (f×g×h 1 2 3 #:tag 1) (values 1 1 0 0 2))
@@ -123,8 +123,8 @@
   (define b×c×d (∏ b c d))
   (define f○i○j (○ f i j))
 
-  (check-true (= a (dom f) (dom i) (dom j) (dom f○i○j)))
-  (check-true (= b×c×d (cod f○i○j)))
+  (check-true (morphism= a (dom f) (dom i) (dom j) (dom f○i○j)))
+  (check-true (morphism= b×c×d (cod f○i○j)))
 
   (check-variant= (f○i○j 9) (values 9 9 9 9 9))
   (check-variant= (f○i○j #:tag 1) (variant 0 0 0 #:tag 1)))
@@ -134,8 +134,8 @@
   (define b+c+d (∐ b c d))
   (define f+g+h (∐ f g h))
 
-  (check-true (= a+b+c (dom f+g+h)))
-  (check-true (= b+c+d (cod f+g+h)))
+  (check-true (morphism= a+b+c (dom f+g+h)))
+  (check-true (morphism= b+c+d (cod f+g+h)))
 
   (check-variant= (f+g+h 1) (values 1 1))
   (check-variant= (f+g+h #:tag 1) (variant #:tag 1))
@@ -158,7 +158,7 @@
   (define h□m□n (□ h m n))
 
   (void)
-  ;; (check-true (= d (cod h) (cod m) (cod n) (cod (□ h m n))))
-  ;; (check-true (= a+b+c (dom h□m□n)))
+  ;; (check-true (morphism= d (cod h) (cod m) (cod n) (cod (□ h m n))))
+  ;; (check-true (morphism= a+b+c (dom h□m□n)))
   ;; (check-variant= (h□m□n 1 2) 1)
   )
