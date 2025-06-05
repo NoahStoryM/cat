@@ -91,17 +91,17 @@
   (check-true (morphism= f (∘ f (dom f)) (∘ (cod f) f))))
 
 (test-case "Product tests"
-  (define a×b×c (∏ a b c))
-  (define b×c×d (∏ b c d))
-  (define f×g×h (∏ f g h))
+  (define a∏b∏c (∏ a b c))
+  (define b∏c∏d (∏ b c d))
+  (define f∏g∏h (∏ f g h))
 
-  (check-true (morphism= a×b×c (dom f×g×h)))
-  (check-true (morphism= b×c×d (cod f×g×h)))
+  (check-true (morphism= a∏b∏c (dom f∏g∏h)))
+  (check-true (morphism= b∏c∏d (cod f∏g∏h)))
 
-  (check-variant= (f×g×h 1 2 3 4 5) (values 1 1 2 3 4))
-  (check-variant= (f×g×h 1 2 3 #:tag 1) (values 1 1 0 0 2))
-  (check-variant= (f×g×h 1 2 3 4 #:tag 2) (variant 1 2 3 #:tag 1))
-  (check-variant= (f×g×h 1 2 #:tag 3) (variant 0 0 1 #:tag 1)))
+  (check-variant= (f∏g∏h 1 2 3 4 5) (values 1 1 2 3 4))
+  (check-variant= (f∏g∏h 1 2 3 #:tag 1) (values 1 1 0 0 2))
+  (check-variant= (f∏g∏h 1 2 3 4 #:tag 2) (variant 1 2 3 #:tag 1))
+  (check-variant= (f∏g∏h 1 2 #:tag 3) (variant 0 0 1 #:tag 1)))
 
 (define i
   (ann
@@ -130,18 +130,18 @@
   (check-variant= (f○i○j #:tag 1) (variant 0 0 0 #:tag 1)))
 
 (test-case "Coproduct tests"
-  (define a+b+c (∐ a b c))
-  (define b+c+d (∐ b c d))
-  (define f+g+h (∐ f g h))
+  (define a∐b∐c (∐ a b c))
+  (define b∐c∐d (∐ b c d))
+  (define f∐g∐h (∐ f g h))
 
-  (check-true (morphism= a+b+c (dom f+g+h)))
-  (check-true (morphism= b+c+d (cod f+g+h)))
+  (check-true (morphism= a∐b∐c (dom f∐g∐h)))
+  (check-true (morphism= b∐c∐d (cod f∐g∐h)))
 
-  (check-variant= (f+g+h 1) (values 1 1))
-  (check-variant= (f+g+h #:tag 1) (variant #:tag 1))
-  (check-variant= (f+g+h 1 2 #:tag 2) (variant 1 2 #:tag 2))
-  (check-variant= (f+g+h #:tag 3) (variant 0 0 #:tag 2))
-  (check-variant= (f+g+h 1 2 #:tag 4) (variant 1 #:tag 3)))
+  (check-variant= (f∐g∐h 1) (values 1 1))
+  (check-variant= (f∐g∐h #:tag 1) (variant #:tag 1))
+  (check-variant= (f∐g∐h 1 2 #:tag 2) (variant 1 2 #:tag 2))
+  (check-variant= (f∐g∐h #:tag 3) (variant 0 0 #:tag 2))
+  (check-variant= (f∐g∐h 1 2 #:tag 4) (variant 1 #:tag 3)))
 
 (define m
   (ann
