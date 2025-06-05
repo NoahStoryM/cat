@@ -1,5 +1,14 @@
-#lang racket/signature
+#lang racket/base
 
-inj #;(-> #:codomain id? natural? ?)
-∐   #;(-> ? ... ?)
-□   #;(->* () (#:codomain id?) #:rest (listof ?) ?)
+(require "initial.rkt"
+         racket/unit)
+
+(provide coproduct^)
+
+(define-signature coproduct^
+  extends initial^
+  (
+   inj #;(-> #:codomain id? natural? ?)
+   □   #;(->* () (#:codomain id?) #:rest (listof ?) ?)
+   ∐   #;(-> ? ... ?)
+   ))

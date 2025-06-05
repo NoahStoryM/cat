@@ -1,3 +1,7 @@
-#lang racket/signature
+#lang racket/base
 
-dist
+(require racket/unit)
+
+(provide distributive^)
+
+(define-signature distributive^ (dist))

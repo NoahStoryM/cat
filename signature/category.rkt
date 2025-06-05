@@ -1,12 +1,17 @@
-#lang racket/signature
+#lang racket/base
 
-(require racket/contract/base)
+(require racket/contract/base
+         racket/unit)
 
-(contracted
- [dom (-> morphism? morphism?)]
- [cod (-> morphism? morphism?)]
- [∘ (-> morphism? morphism? ... morphism?)]
- [⨾ (-> morphism? morphism? ... morphism?)]
- [morphism= (-> morphism? morphism? ... boolean?)]
- [morphism? (-> any/c boolean?)]
- [object? (-> morphism? boolean?)])
+(provide category^)
+
+(define-signature category^
+  ((contracted
+    [dom (-> morphism? morphism?)]
+    [cod (-> morphism? morphism?)]
+    [∘ (-> morphism? morphism? ... morphism?)]
+    [⨾ (-> morphism? morphism? ... morphism?)]
+    [morphism= (-> morphism? morphism? ... boolean?)]
+    [morphism? (-> any/c boolean?)]
+    [object? (-> morphism? boolean?)])))
+

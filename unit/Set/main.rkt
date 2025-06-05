@@ -86,8 +86,12 @@
 ;; Product
 ;; *****************************************************************************
 
-(define (*->1 . _) (values))
 (define |1| (ann : 1))
+(define (1<-* . _) (values))
+(define (1← s)
+  (if (type= s 1)
+      |1|
+      (ann 1<-* (← 1 ,s))))
 
 (define (proj #:domain s i)
   (match s
@@ -169,7 +173,7 @@
 
 (define (○ #:domain [s #f] . f*)
   (if (null? f*)
-      (or (and s (ann *->1 (→ ,s 1))) |1|)
+      (or (and s (1← s)) |1|)
       (let ([s (or (and s (normalize-type s))
                    (function-source (car f*)))])
         (define t*
@@ -180,7 +184,7 @@
                (unquoted-printing-string (~a (function-source f)))))
             (function-target f)))
         (define t (normalize-type `(× . ,t*)))
-        (define id (ann *->1 (→ ,s 1)))
+        (define id (ann 1<-* (← 1 ,s)))
         (match (remove* (list id) f* morphism=)
           [(list)
            (unless (equal? t '(×))
@@ -227,8 +231,12 @@
 ;; Coproduct
 ;; *****************************************************************************
 
-(define 0->* (case-λ))
 (define |0| (ann : 0))
+(define 0->* (case-λ))
+(define (0→ t)
+  (if (type= t 0)
+      |0|
+      (ann 0->* (→ 0 ,t))))
 
 (define (inj #:codomain t i)
   (match t
@@ -281,7 +289,7 @@
 
 (define (□ #:codomain [t #f] . f*)
   (if (null? f*)
-      (or (and t (ann 0->* (→ 0 ,t))) |0|)
+      (or (and t (0→ t)) |0|)
       (let ([t (or (and t (normalize-type t))
                    (function-target (car f*)))])
         (define s*
