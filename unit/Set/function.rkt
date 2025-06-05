@@ -30,7 +30,7 @@
     (apply raise-arity-error name arity a*))
   (apply apply-path p #:tag n a*))
 
-(struct function (path source target)
+(struct function (path domain codomain)
   #:guard (λ (p s t _) (values p (normalize-type s) (normalize-type t)))
   #:property prop:procedure apply-function
   #:transparent)
@@ -50,11 +50,11 @@
         [`(+ ,tp* ...) (normalize-arity (map unsafe-get-arity tp*))]
         [`(× ,tp* ...) (length tp*)]
         [_ 1]))
-    (values (make function-source)
-            (make function-target))))
+    (values (make function-domain)
+            (make function-codomain))))
 
 (define (function-coarity f)
-  (unsafe-get-coarity (function-source f)))
+  (unsafe-get-coarity (function-domain f)))
 
 (define (function-result-coarity f)
-  (unsafe-get-coarity (function-target f)))
+  (unsafe-get-coarity (function-codomain f)))

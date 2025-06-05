@@ -6,6 +6,7 @@
          "../../signature/category.rkt"
          "../../signature/product.rkt"
          "../../signature/coproduct.rkt"
+         racket/pretty
          racket/match
          racket/unit
          rackunit
@@ -24,18 +25,18 @@
 
 
 (test-case "Type tests"
-  (check-true (type= '(+ (+ a b) (+ c d)) '(+ a b c d)))
-  (check-true (type= '(× a (+ b c)) '(+ (× a b) (× a c))))
-  (check-true (type= '(× (+ b c) a) '(+ (× b a) (× c a))))
-  (check-true (type= '(× (+ a b) (+ c d)) '(+ (× a c) (× a d) (× b c) (× b d))))
-  (check-true (type= '(× (+ a b) y (+ c d)) '(+ (× a y c) (× a y d) (× b y c) (× b y d))))
-  (check-true (type= '(+ a 0 b) '(+ a b)))
-  (check-true (type= '(× a 1 b) '(× a b)))
-  (check-true (type= 0 '(+) '(× 0) '(× a 0) '(× 0 a) '(× a 0 b)))
-  (check-true (type= 1 '(×)))
-  (check-true (type= 2 '(+ (×) (×))))
-  (check-true (type= 5 '(+ 3 2) '(+ 2 3)))
-  (check-true (type= 6 '(× 2 3) '(× 3 2))))
+  (check-true (object= '(+ (+ a b) (+ c d)) '(+ a b c d)))
+  (check-true (object= '(× a (+ b c)) '(+ (× a b) (× a c))))
+  (check-true (object= '(× (+ b c) a) '(+ (× b a) (× c a))))
+  (check-true (object= '(× (+ a b) (+ c d)) '(+ (× a c) (× a d) (× b c) (× b d))))
+  (check-true (object= '(× (+ a b) y (+ c d)) '(+ (× a y c) (× a y d) (× b y c) (× b y d))))
+  (check-true (object= '(+ a 0 b) '(+ a b)))
+  (check-true (object= '(× a 1 b) '(× a b)))
+  (check-true (object= 0 '(+) '(× 0) '(× a 0) '(× 0 a) '(× a 0 b)))
+  (check-true (object= 1 '(×)))
+  (check-true (object= 2 '(+ (×) (×))))
+  (check-true (object= 5 '(+ 3 2) '(+ 2 3)))
+  (check-true (object= 6 '(× 2 3) '(× 3 2))))
 
 (define a (ann : (+ Any 1)))
 (define b (ann : (+ (× Any Any) 1)))
@@ -66,10 +67,10 @@
    (→ (× Any Any) Any)))
 
 (test-case "Variant tests"
-  (check-pred object? a)
-  (check-pred object? b)
-  (check-pred object? c)
-  (check-pred object? d)
+  (check-pred identity? a)
+  (check-pred identity? b)
+  (check-pred identity? c)
+  (check-pred identity? d)
   (check-variant= (f 'a #:tag 0) (values 'a 'a))
   (check-variant= (f 'a) (variant 'a 'a #:tag 0))
   (check-variant= (f #:tag 1) (variant #:tag 1))
@@ -77,26 +78,26 @@
 
 (test-case "Category tests"
   ;; Existence of composition
-  (check-true (morphism= b (cod f) (dom g)))
-  (check-true (morphism= a (dom (∘ g f)) (dom f)))
-  (check-true (morphism= c (cod (∘ g f)) (cod g)))
+  (check-true (morphism= b (tgt f) (src g)))
+  (check-true (morphism= a (src (∘ g f)) (src f)))
+  (check-true (morphism= c (tgt (∘ g f)) (tgt g)))
 
   ;; Associativity of composition
   (check-true (morphism= (∘ h g f) (∘ (∘ h g) f) (∘ h (∘ g f))))
 
   ;; Existence of identity arrows
-  (check-true (morphism= a (dom a) (cod a)))
+  (check-true (morphism= a (src a) (tgt a)))
 
   ;; Composition and identity arrows
-  (check-true (morphism= f (∘ f (dom f)) (∘ (cod f) f))))
+  (check-true (morphism= f (∘ f (src f)) (∘ (tgt f) f))))
 
 (test-case "Product tests"
   (define a∏b∏c (∏ a b c))
   (define b∏c∏d (∏ b c d))
   (define f∏g∏h (∏ f g h))
 
-  (check-true (morphism= a∏b∏c (dom f∏g∏h)))
-  (check-true (morphism= b∏c∏d (cod f∏g∏h)))
+  (check-true (morphism= a∏b∏c (src f∏g∏h)))
+  (check-true (morphism= b∏c∏d (tgt f∏g∏h)))
 
   (check-variant= (f∏g∏h 1 2 3 4 5) (values 1 1 2 3 4))
   (check-variant= (f∏g∏h 1 2 3 #:tag 1) (values 1 1 0 0 2))
@@ -123,8 +124,8 @@
   (define b×c×d (∏ b c d))
   (define f○i○j (○ f i j))
 
-  (check-true (morphism= a (dom f) (dom i) (dom j) (dom f○i○j)))
-  (check-true (morphism= b×c×d (cod f○i○j)))
+  (check-true (morphism= a (src f) (src i) (src j) (src f○i○j)))
+  (check-true (morphism= b×c×d (tgt f○i○j)))
 
   (check-variant= (f○i○j 9) (values 9 9 9 9 9))
   (check-variant= (f○i○j #:tag 1) (variant 0 0 0 #:tag 1)))
@@ -134,8 +135,8 @@
   (define b∐c∐d (∐ b c d))
   (define f∐g∐h (∐ f g h))
 
-  (check-true (morphism= a∐b∐c (dom f∐g∐h)))
-  (check-true (morphism= b∐c∐d (cod f∐g∐h)))
+  (check-true (morphism= a∐b∐c (src f∐g∐h)))
+  (check-true (morphism= b∐c∐d (tgt f∐g∐h)))
 
   (check-variant= (f∐g∐h 1) (values 1 1))
   (check-variant= (f∐g∐h #:tag 1) (variant #:tag 1))
@@ -145,20 +146,24 @@
 
 (define m
   (ann
-   (λ (x y) (cons x y))
-   (→ (× Any Any) Any)))
+   (λ (#:tag [n 0] . a*)
+     (match* (a* n)
+       [((list a) 0) (box a)]
+       [((list  ) 1) #()]))
+   (→ (+ Any 1) Any)))
 
 (define n
   (ann
-   (λ (v) (box v))
-   (→ Any Any)))
+   (λ (#:tag [n 0] . a*)
+     (match* (a* n)
+       [((list a0 a1) 0) (cons a0 a1)]
+       [((list      ) 1) '()]))
+   (→ (+ (× Any Any) 1) Any)))
 
 (test-case "Copairing tests"
   (define a+b+c (∐ a b c))
-  (define h□m□n (□ h m n))
+  (define m□n□h (□ m n h))
 
-  (void)
-  ;; (check-true (morphism= d (cod h) (cod m) (cod n) (cod (□ h m n))))
-  ;; (check-true (morphism= a+b+c (dom h□m□n)))
-  ;; (check-variant= (h□m□n 1 2) 1)
-  )
+  (check-true (morphism= d (tgt m) (tgt n) (tgt h) (tgt m□n□h)))
+  (check-true (morphism= a+b+c (src m□n□h)))
+  (check-variant= (m□n□h 1 2 #:tag 2) (cons 1 2)))

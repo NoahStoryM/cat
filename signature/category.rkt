@@ -7,11 +7,15 @@
 
 (define-signature category^
   ((contracted
-    [dom (-> morphism? morphism?)]
-    [cod (-> morphism? morphism?)]
+    [dom (-> morphism? object?)]
+    [cod (-> morphism? object?)]
+    [id (-> object? (and/c morphism? identity?))]
+    [src (-> morphism? (and/c morphism? identity?))]
+    [tgt (-> morphism? (and/c morphism? identity?))]
     [∘ (-> morphism? morphism? ... morphism?)]
     [⨾ (-> morphism? morphism? ... morphism?)]
     [morphism= (-> morphism? morphism? ... boolean?)]
     [morphism? (-> any/c boolean?)]
-    [object? (-> morphism? boolean?)])))
-
+    [identity? (-> morphism? boolean?)]
+    [object= (-> object? object? ... boolean?)]
+    [object? (-> any/c boolean?)])))

@@ -49,22 +49,25 @@
 ;; Category
 ;; *****************************************************************************
 
-(define (dom f) (ann : ,(function-source f)))
-(define (cod f) (ann : ,(function-target f)))
+(define (dom f) (function-domain f))
+(define (cod f) (function-codomain f))
+(define (id tp) (ann : ,tp))
+(define (src f) (ann : ,(function-domain f)))
+(define (tgt f) (ann : ,(function-codomain f)))
 (define ⨾
   (case-λ
    [(f) f]
    [(f . f*)
-    (define s (function-source f))
+    (define s (function-domain f))
     (for/fold ([p (function-path f)]
-               [t (function-target f)]
+               [t (function-codomain f)]
                #:result (function p s t))
               ([f (in-list f*)])
-      (define s (function-source f))
+      (define s (function-domain f))
       (unless (unsafe-type= t s)
         (raise-argument-error '⨾ (~a t) (unquoted-printing-string s)))
       (values (treelist-append p (function-path f))
-              (function-target f)))]))
+              (function-codomain f)))]))
 (define (∘ . f*) (apply ⨾ (reverse f*)))
 (define (morphism= f1 . f*)
   (match-define (function p1 s1 t1) f1)
@@ -78,9 +81,11 @@
                    [e2 (in-treelist p2)])
            (equal? e1 e2)))))
 (define (morphism? v) (function? v))
-(define (object? f)
+(define (identity? f)
   (match-define (function p s t) f)
   (and (treelist-empty? p) (unsafe-type= s t)))
+(define (object= tp . tp*) (apply type= tp tp*))
+(define (object? tp) (type? tp))
 
 ;; *****************************************************************************
 ;; Product
@@ -175,14 +180,14 @@
   (if (null? f*)
       (or (and s (1← s)) |1|)
       (let ([s (or (and s (normalize-type s))
-                   (function-source (car f*)))])
+                   (function-domain (car f*)))])
         (define t*
           (for/list ([f (in-list f*)])
-            (unless (unsafe-type= s (function-source f))
+            (unless (unsafe-type= s (function-domain f))
               (raise-argument-error
                '○ (~a s)
-               (unquoted-printing-string (~a (function-source f)))))
-            (function-target f)))
+               (unquoted-printing-string (~a (function-domain f)))))
+            (function-codomain f)))
         (define t (normalize-type `(× . ,t*)))
         (define id (ann 1<-* (← 1 ,s)))
         (match (remove* (list id) f* morphism=)
@@ -291,14 +296,14 @@
   (if (null? f*)
       (or (and t (0→ t)) |0|)
       (let ([t (or (and t (normalize-type t))
-                   (function-target (car f*)))])
+                   (function-codomain (car f*)))])
         (define s*
           (for/list ([f (in-list f*)])
-            (unless (unsafe-type= t (function-target f))
+            (unless (unsafe-type= t (function-codomain f))
               (raise-argument-error
                '□ (~a t)
-               (unquoted-printing-string (~a (function-target f)))))
-            (function-source f)))
+               (unquoted-printing-string (~a (function-codomain f)))))
+            (function-domain f)))
         (define s (normalize-type `(+ . ,s*)))
         (define id (ann 0->* (→ 0 ,t)))
         (match (remove* (list id) f* morphism=)
