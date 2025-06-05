@@ -299,7 +299,7 @@
                '□ (~a t)
                (unquoted-printing-string (~a (function-target f)))))
             (function-source f)))
-        (define s (normalize-type `(× . ,s*)))
+        (define s (normalize-type `(+ . ,s*)))
         (define id (ann 0->* (→ 0 ,t)))
         (match (remove* (list id) f* morphism=)
           [(list)
